@@ -94,7 +94,6 @@ export default function MainPage() {
               onChange={(event) => setQuery(event.target.value)}
               onFocus={() => setSearchOpen(true)}
             />
-            <kbd>⌘ K</kbd>
             {searchOpen && <SearchPanel query={query} onClose={() => setSearchOpen(false)} />}
           </div>
           <span className="header-separator" />
@@ -156,7 +155,7 @@ export default function MainPage() {
 
       <footer className="gap-6 px-9 py-5 max-[760px]:px-4">
         <a className="brand brand--footer gap-3" href="#top"><span className="brand-mark" aria-hidden="true"><b>AI</b><i /></span><span>AI Olympiad Wiki</span></a>
-        <p>Built for curious minds and confident competitors.</p>
+        <p>Create by NPN</p>
         <a href="#top">Back to top ↑</a>
       </footer>
     </div>
