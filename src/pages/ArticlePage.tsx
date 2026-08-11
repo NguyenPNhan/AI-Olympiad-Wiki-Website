@@ -180,9 +180,6 @@ function ArticlePage() {
         </Link>
 
         <nav className="main-nav gap-7 max-[1080px]:gap-[18px]" aria-label="Primary navigation">
-          <Link to="/">Home</Link>
-          <Link to="/#level-beginner">Getting Started</Link>
-          <span className="nav-current">{article.category}<span className="nav-dot" /></span>
         </nav>
 
         <div className="header-tools gap-3 max-[760px]:col-start-3">

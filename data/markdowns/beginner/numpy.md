@@ -11,7 +11,7 @@ NumPy is the foundation of numerical computing in Python. It lets you work with 
 
 By the end of this guide, you will be able to create and inspect arrays, select and transform data, use broadcasting, perform matrix operations, and recognize when arrays share memory.
 
-## Getting Started
+## 1. Getting Started
 
 ### Import NumPy
 
@@ -151,7 +151,7 @@ print(arr)
 
 ---
 
-## Selecting and Updating Data
+## 2. Selecting and Updating Data
 
 ### Indexing
 
@@ -263,7 +263,7 @@ print(arr)
 
 ---
 
-## Array Calculations
+## 3. Array Calculations
 
 ### Scalar Arithmetic
 
@@ -404,7 +404,7 @@ print(np.median(arr))  # Calculate the median
 
 ---
 
-## Shape and Memory
+## 5. Shape and Memory
 
 ### `reshape()`
 
@@ -490,7 +490,7 @@ print(result)
 
 ---
 
-## Filtering, Sorting, and Searching
+## 6. Filtering, Sorting, and Searching
 
 ### Boolean Filtering
 
@@ -581,7 +581,7 @@ print(result)
 
 ---
 
-## Combining and Splitting Arrays
+## 7. Combining and Splitting Arrays
 
 ### `np.concatenate()`
 
@@ -639,7 +639,7 @@ print(result)
 
 ---
 
-## Random Numbers
+## 8. Random Numbers
 
 ### `np.random.random()`
 
@@ -685,7 +685,7 @@ print(arr)
 
 ---
 
-## Matrix Operations
+## 9. Matrix Operations
 
 ```python
 a = np.array([
@@ -760,7 +760,7 @@ print(result)
 
 ---
 
-## Copies, Views, and Data Types
+## 10. Copies, Views, and Data Types
 
 ### `copy()`
 
@@ -819,7 +819,7 @@ print(result)
 
 ---
 
-## Useful Numerical Functions
+## 11. Useful Numerical Functions
 
 ### `np.any()`
 
