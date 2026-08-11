@@ -75,7 +75,7 @@ function articleHeadings(markdown: string) {
 
     if (inCodeBlock) return []
 
-    const match = line.match(/^(##)\s+(.+)$/)
+    const match = line.trimEnd().match(/^(#{2,3})\s+(.+)$/)
     if (!match) return []
 
     const title = cleanHeading(match[2])
@@ -183,7 +183,6 @@ function ArticlePage() {
         </nav>
 
         <div className="header-tools gap-3 max-[760px]:col-start-3">
-          <Link className="article-library-link" to="/">Browse library</Link>
           <span className="header-separator" />
           <button className="icon-button" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Toggle color theme">
             <span aria-hidden="true">{theme === 'light' ? '◐' : '◑'}</span>
@@ -242,6 +241,15 @@ function ArticlePage() {
           </nav>
         </aside>
       </main>
+
+      <footer className="article-footer gap-6 px-9 py-5 max-[760px]:px-4">
+        <a className="brand brand--footer gap-3" href="#top">
+          <span className="brand-mark" aria-hidden="true"><b>AI</b><i /></span>
+          <span>AI Olympiad Wiki</span>
+        </a>
+        <p>Create by NPN</p>
+        <a href="#top">Back to top ↑</a>
+      </footer>
     </div>
   )
 }

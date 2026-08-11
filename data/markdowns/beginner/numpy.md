@@ -9,8 +9,6 @@ NumPy is the foundation of numerical computing in Python. It lets you work with 
 
 > **Practice this:** track the shape of every array. Most NumPy bugs become much easier to solve once you know the shape going into and coming out of each operation.
 
-By the end of this guide, you will be able to create and inspect arrays, select and transform data, use broadcasting, perform matrix operations, and recognize when arrays share memory.
-
 ## 1. Getting Started
 
 ### Import NumPy

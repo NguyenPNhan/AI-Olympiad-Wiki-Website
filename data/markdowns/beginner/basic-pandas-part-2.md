@@ -130,7 +130,6 @@ def get_grade(score):
     else:
         return "D"
 
-
 df["grade"] = df["score"].apply(get_grade)
 ```
 
@@ -180,7 +179,7 @@ Paris  -> 2
 
 ---
 
-# Dummy Variables / One-Hot Encoding
+## 8. Dummy Variables / One-Hot Encoding
 
 Machine learning models usually require numerical inputs.
 
@@ -205,7 +204,7 @@ We can convert these categories into numerical dummy columns.
 
 ---
 
-## 8. `pd.get_dummies()`
+### `pd.get_dummies()`
 
 ```python
 dummy = pd.get_dummies(df["city"])
@@ -244,7 +243,7 @@ Output:
 
 ---
 
-## 9. Add Dummy Columns to a DataFrame
+### Add Dummy Columns to a DataFrame
 
 You can encode a categorical column directly.
 
@@ -268,7 +267,7 @@ Result:
 
 ---
 
-## 10. Encode Multiple Columns
+## 9. Encode Multiple Columns
 
 ```python
 df = pd.DataFrame({
@@ -298,7 +297,7 @@ Possible result:
 
 ---
 
-## 11. `drop_first=True`
+## 10. `drop_first=True`
 
 Sometimes one dummy column is unnecessary.
 
@@ -332,7 +331,7 @@ This is commonly useful in statistical models.
 
 ---
 
-# Missing Values
+## 11. Missing Values
 
 Missing values are usually represented as `NaN`.
 
@@ -345,7 +344,7 @@ df = pd.DataFrame({
 
 ---
 
-## 12. Find Missing Values
+### Find Missing Values
 
 ```python
 df.isna()
@@ -365,7 +364,7 @@ df.isnull().sum()
 
 ---
 
-## 13. Remove Missing Values
+### Remove Missing Values
 
 Remove rows containing missing values:
 
@@ -383,7 +382,7 @@ df = df.dropna(
 
 ---
 
-## 14. Fill Missing Values
+### Fill Missing Values
 
 Fill missing values with a fixed value:
 
@@ -415,9 +414,7 @@ df["city"] = df["city"].fillna("Unknown")
 
 ---
 
-# Sorting
-
-## 15. Sort Values
+## 12. Sorting
 
 Sort ascending:
 
@@ -445,9 +442,9 @@ df = df.sort_values(
 
 ---
 
-# Unique Values
+## 13. Unique Values
 
-## 16. Find Unique Values
+### Find Unique Values
 
 ```python
 df["city"].unique()
@@ -467,7 +464,7 @@ df["city"].nunique()
 
 ---
 
-## 17. Count Values
+### Count Values
 
 ```python
 df["city"].value_counts()
@@ -491,9 +488,9 @@ df["city"].value_counts(
 
 ---
 
-# Duplicates
+## 14. Duplicates
 
-## 18. Find Duplicates
+### Find Duplicates
 
 ```python
 df.duplicated()
@@ -515,7 +512,7 @@ df.duplicated(
 
 ---
 
-## 19. Remove Duplicates
+### Remove Duplicates
 
 ```python
 df = df.drop_duplicates()
@@ -540,7 +537,7 @@ df = df.drop_duplicates(
 
 ---
 
-# Reset Index
+## 15. Reset Index
 
 Operations such as filtering and sorting can leave unusual index values.
 
@@ -560,9 +557,9 @@ df = df.reset_index(
 
 ---
 
-# Combine DataFrames
+## 16. Combine DataFrames
 
-## 20. `pd.concat()`
+### `pd.concat()`
 
 Combine DataFrames vertically:
 
@@ -602,9 +599,7 @@ df = pd.concat(
 
 ---
 
-# Merge DataFrames
-
-## 21. `pd.merge()`
+### `pd.merge()`
 
 Suppose we have two tables.
 
@@ -641,7 +636,7 @@ Result:
 
 ---
 
-## Merge Types
+## 17. Merge Types
 
 ### Inner Join
 
@@ -697,7 +692,7 @@ pd.merge(
 
 ---
 
-# String Operations
+## 18. String Operations
 
 Pandas provides string functions through `.str`.
 
@@ -715,7 +710,7 @@ df["name"].str.title()
 
 ---
 
-## 22. Remove Extra Spaces
+## 19. Remove Extra Spaces
 
 ```python
 df["name"] = df["name"].str.strip()
@@ -735,7 +730,7 @@ df["name"] = df["name"].str.rstrip()
 
 ---
 
-## 23. Search Strings
+## 20. Search Strings
 
 ```python
 df[df["name"].str.contains("Ali")]
@@ -754,7 +749,7 @@ df[
 
 ---
 
-## 24. Replace Text
+## 21. Replace Text
 
 ```python
 df["name"] = df["name"].str.replace(
@@ -765,7 +760,7 @@ df["name"] = df["name"].str.replace(
 
 ---
 
-## 25. Split Strings
+## 22. Split Strings
 
 ```python
 df["email"] = [
@@ -785,63 +780,67 @@ yahoo.com
 
 ---
 
-# Quick reference
+## Quick reference
 
 ```python
-# Rename column
+# Example: rename the old column to new.
 df.rename(columns={"old": "new"})
 
-# Change data type
+# Example: convert age values to integers.
 df["age"] = df["age"].astype(int)
 
-# Create column
+# Example: create a Boolean column from a score condition.
 df["passed"] = df["score"] >= 80
 
-# Apply function
+# Example: apply a custom function to every grade value.
 df["grade"] = df["score"].apply(func)
 
-# Replace values
+# Example: replace Tokyo with Japan.
 df["city"] = df["city"].replace({"Tokyo": "Japan"})
 
-# Map values
+# Example: map each city through a mapping dictionary.
 df["code"] = df["city"].map(mapping)
 
-# One-hot encoding
+# Example: one-hot encode city with integer values.
 pd.get_dummies(df, columns=["city"], dtype=int)
 
-# Check missing values
+# Example: count missing values in every column.
 df.isna().sum()
 
-# Remove missing values
+# Example: remove rows containing missing values.
 df.dropna()
 
-# Fill missing values
+# Example: fill missing scores with the mean score.
 df["score"].fillna(df["score"].mean())
 
-# Sort
+# Example: sort from the highest score to the lowest.
 df.sort_values("score", ascending=False)
 
-# Unique values
+# Example: return each distinct city once.
 df["city"].unique()
 
-# Value counts
+# Example: count rows for each city.
 df["city"].value_counts()
 
-# Remove duplicates
+# Example: remove duplicate rows.
 df.drop_duplicates()
 
-# Reset index
+# Example: generate a clean index without retaining the old index.
 df.reset_index(drop=True)
 
-# Combine rows
+# Example: stack df1 and df2 and create a new index.
 pd.concat([df1, df2], ignore_index=True)
 
-# Merge tables
+# Example: keep all df1 rows while matching df2 by id.
 pd.merge(df1, df2, on="id", how="left")
 
-# String operations
+# Example: normalize names to lowercase.
 df["name"].str.lower()
+
+# Example: remove surrounding whitespace from names.
 df["name"].str.strip()
+
+# Example: test whether names contain "Alice".
 df["name"].str.contains("Alice")
 ```
 
@@ -854,31 +853,24 @@ import pandas as pd
 
 df = pd.read_csv("data.csv")
 
-# Remove duplicates
 df = df.drop_duplicates()
 
-# Fill missing ages
 df["age"] = df["age"].fillna(
     df["age"].median()
 )
 
-# Fill missing categories
 df["city"] = df["city"].fillna("Unknown")
 
-# Clean strings
 df["name"] = df["name"].str.strip()
 
-# Create a new feature
 df["passed"] = df["score"] >= 80
 
-# Convert categorical columns
 df = pd.get_dummies(
     df,
     columns=["city"],
     dtype=int
 )
 
-# Reset index
 df = df.reset_index(drop=True)
 
 print(df.head())
