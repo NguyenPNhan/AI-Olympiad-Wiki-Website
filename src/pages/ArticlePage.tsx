@@ -1,18 +1,126 @@
-import { useEffect, useState } from 'react'
+import { isValidElement, useEffect, useMemo, useState, type ReactNode } from 'react'
+import bash from 'highlight.js/lib/languages/bash'
+import c from 'highlight.js/lib/languages/c'
+import cpp from 'highlight.js/lib/languages/cpp'
+import css from 'highlight.js/lib/languages/css'
+import java from 'highlight.js/lib/languages/java'
+import javascript from 'highlight.js/lib/languages/javascript'
+import json from 'highlight.js/lib/languages/json'
+import markdown from 'highlight.js/lib/languages/markdown'
+import python from 'highlight.js/lib/languages/python'
+import rust from 'highlight.js/lib/languages/rust'
+import sql from 'highlight.js/lib/languages/sql'
+import typescript from 'highlight.js/lib/languages/typescript'
+import xml from 'highlight.js/lib/languages/xml'
+import yaml from 'highlight.js/lib/languages/yaml'
 import ReactMarkdown from 'react-markdown'
+import rehypeHighlight from 'rehype-highlight'
 import rehypeKatex from 'rehype-katex'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import { Link, useParams } from 'react-router-dom'
 import 'katex/dist/katex.min.css'
-import { articleHref, articles, categories } from '../content'
+import { articles } from '../content'
+
+const highlightLanguages = {
+  bash,
+  c,
+  cpp,
+  css,
+  java,
+  javascript,
+  json,
+  markdown,
+  python,
+  rust,
+  sql,
+  typescript,
+  xml,
+  yaml,
+}
+
+function nodeToText(node: ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') return String(node)
+  if (Array.isArray(node)) return node.map(nodeToText).join('')
+  if (isValidElement<{ children?: ReactNode }>(node)) return nodeToText(node.props.children)
+  return ''
+}
 
 function headingId(value: string) {
   return value
+    .normalize('NFKD')
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/[`*_~]/g, '')
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
     .trim()
     .replace(/\s+/g, '-')
+}
+
+function cleanHeading(value: string) {
+  return value
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[`*_~]/g, '')
+    .replace(/\s+#+\s*$/, '')
+    .trim()
+}
+
+function articleHeadings(markdown: string) {
+  let inCodeBlock = false
+
+  return markdown.split('\n').flatMap((line) => {
+    if (/^\s*```/.test(line)) {
+      inCodeBlock = !inCodeBlock
+      return []
+    }
+
+    if (inCodeBlock) return []
+
+    const match = line.match(/^(##)\s+(.+)$/)
+    if (!match) return []
+
+    const title = cleanHeading(match[2])
+    return [{ level: match[1].length, title, id: headingId(title) }]
+  })
+}
+
+function Heading({ level, children }: { level: 1 | 2 | 3 | 4; children?: ReactNode }) {
+  const id = headingId(nodeToText(children))
+  const Tag = level === 1 ? 'h1' : level === 2 ? 'h2' : level === 3 ? 'h3' : 'h4'
+
+  return (
+    <Tag id={id}>
+      <span>{children}</span>
+      <a className="heading-anchor" href={`#${id}`} aria-label={`Link to ${nodeToText(children)}`}>#</a>
+    </Tag>
+  )
+}
+
+function CodeBlock({ children }: { children?: ReactNode }) {
+  const [copied, setCopied] = useState(false)
+  const codeElement = Array.isArray(children) ? children.find(isValidElement) : children
+  const codeProps = isValidElement<{ className?: string; children?: ReactNode }>(codeElement)
+    ? codeElement.props
+    : undefined
+  const language = codeProps?.className?.match(/(?:^|\s)language-([\w-]+)/)?.[1] || 'text'
+  const code = nodeToText(codeProps?.children ?? children).replace(/\n$/, '')
+
+  async function copyCode() {
+    await navigator.clipboard.writeText(code)
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1600)
+  }
+
+  return (
+    <div className="code-block">
+      <div className="code-block__header">
+        <span>{language}</span>
+        <button type="button" onClick={copyCode} aria-label={`Copy ${language} code`}>
+          {copied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
+      <pre>{children}</pre>
+    </div>
+  )
 }
 
 function ArticlePage() {
@@ -22,6 +130,9 @@ function ArticlePage() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() =>
     localStorage.getItem('aio-theme') === 'light' ? 'light' : 'dark',
   )
+  const [activeHeading, setActiveHeading] = useState('top')
+
+  const headings = useMemo(() => articleHeadings(article?.body ?? ''), [article?.body])
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -31,6 +142,23 @@ function ArticlePage() {
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [slug])
+
+  useEffect(() => {
+    if (!article) return
+
+    const updateActiveHeading = () => {
+      const candidates = ['top', ...headings.map((heading) => heading.id)]
+        .map((id) => document.getElementById(id))
+        .filter((element): element is HTMLElement => Boolean(element))
+      const current = candidates.filter((element) => element.getBoundingClientRect().top <= 130).at(-1)
+      setActiveHeading(current?.id ?? 'top')
+    }
+
+    updateActiveHeading()
+    window.addEventListener('scroll', updateActiveHeading, { passive: true })
+    return () => window.removeEventListener('scroll', updateActiveHeading)
+  }, [article, headings])
+
 
   if (!article) {
     return (
@@ -42,12 +170,6 @@ function ArticlePage() {
       </main>
     )
   }
-
-  const currentCategory = categories.find((category) => category.slug === article.categorySlug)
-  const headings = article.body
-    .split('\n')
-    .filter((line) => /^##\s+/.test(line))
-    .map((line) => line.replace(/^##\s+/, '').trim())
 
   return (
     <div className="site-shell article-site-shell min-h-screen">
@@ -73,34 +195,6 @@ function ArticlePage() {
       </header>
 
       <main id="top" className="article-layout grid min-h-[calc(100vh-68px)] max-[760px]:block max-[760px]:min-h-0">
-        <aside className="article-sidebar px-6 pt-8 pb-16" aria-label="Wiki navigation">
-          <div className="sidebar-group-title mb-2">Learning paths</div>
-          <nav className="grid gap-1">
-            {categories.map((category) => (
-              <Link
-                className={category.slug === article.categorySlug ? 'is-active' : ''}
-                to={`/#level-${category.slug}`}
-                key={category.slug}
-              >
-                {category.title}
-              </Link>
-            ))}
-          </nav>
-
-          {currentCategory && currentCategory.articles.length > 0 && (
-            <>
-              <div className="sidebar-group-title sidebar-group-title--articles mt-7 mb-2">In this level</div>
-              <nav className="grid gap-1">
-                {currentCategory.articles.map((item) => (
-                  <Link className={item.slug === article.slug ? 'is-active' : ''} to={articleHref(item)} key={item.slug}>
-                    {item.title}
-                  </Link>
-                ))}
-              </nav>
-            </>
-          )}
-        </aside>
-
         <article className="article-column px-12 pt-10 pb-24 max-[760px]:px-4 max-[760px]:pt-7 max-[760px]:pb-16">
           <div className="article-breadcrumbs mb-5 gap-2">
             <Link to="/">Home</Link><span>/</span><Link to={`/#level-${article.categorySlug}`}>{article.category}</Link>
@@ -110,16 +204,24 @@ function ArticlePage() {
               <span className="mb-2">{article.category} · {article.difficulty}★</span>
               <h1 className="m-0">{article.title}</h1>
             </div>
-            <Link to="/" className="copy-page-button px-3 py-2">All articles</Link>
           </div>
 
           <div className="markdown-body">
             <ReactMarkdown
               remarkPlugins={[remarkGfm, remarkMath]}
-              rehypePlugins={[rehypeKatex]}
+              rehypePlugins={[rehypeKatex, [rehypeHighlight, { detect: false, languages: highlightLanguages }]]}
               components={{
-                h2: ({ children }) => <h2 id={headingId(String(children))}>{children}</h2>,
+                h1: ({ children }) => <Heading level={1}>{children}</Heading>,
+                h2: ({ children }) => <Heading level={2}>{children}</Heading>,
+                h3: ({ children }) => <Heading level={3}>{children}</Heading>,
+                h4: ({ children }) => <Heading level={4}>{children}</Heading>,
+                pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
                 table: ({ children }) => <div className="table-wrap markdown-table-wrap"><table>{children}</table></div>,
+                a: ({ href, children }) => {
+                  const external = href?.startsWith('http://') || href?.startsWith('https://')
+                  return <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}>{children}</a>
+                },
+                img: ({ src, alt }) => <img src={src} alt={alt ?? ''} loading="lazy" />,
               }}
             >
               {article.body}
@@ -129,8 +231,18 @@ function ArticlePage() {
 
         <aside className="article-toc px-5 pt-8 pb-12" aria-label="On this page">
           <div className="mb-3">On this page</div>
-          <a href="#top">Overview</a>
-          {headings.map((heading) => <a href={`#${headingId(heading)}`} key={heading}>{heading}</a>)}
+          <nav>
+            <a className={activeHeading === 'top' ? 'is-active' : ''} href="#top">Overview</a>
+            {headings.map((heading, index) => (
+              <a
+                className={`${heading.level === 3 ? 'is-subheading' : ''} ${activeHeading === heading.id ? 'is-active' : ''}`.trim()}
+                href={`#${heading.id}`}
+                key={`${heading.level}-${heading.id}-${index}`}
+              >
+                {heading.title}
+              </a>
+            ))}
+          </nav>
         </aside>
       </main>
     </div>

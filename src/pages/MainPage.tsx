@@ -108,12 +108,9 @@ export default function MainPage() {
 
       <main id="top" className="landing-main mx-auto w-full max-w-[1080px] px-7 pb-28 max-[760px]:px-4">
         <section id="introduction" className="intro-section px-0 pt-20 pb-7 text-center max-[760px]:pt-14">
-          <a className="announcement mb-6 px-3 py-1.5" href="#level-beginner">A practical AI competition library <span>→</span></a>
           <h1 className="m-0">AI Olympiad Wiki</h1>
-          <p className="mx-auto mt-6">A focused collection of concepts, tools, and techniques for students learning artificial intelligence and preparing for competition.</p>
 
-          <div className="difficulty-block mx-auto mt-20 max-[760px]:mt-16">
-            <p className="mt-0 mb-5">Every technical article is marked from one to five stars.</p>
+          <div className="difficulty-block mx-auto mt-10 max-[760px]:mt-16">
             <div className="table-wrap">
               <table>
                 <thead><tr><th>Difficulty</th><th>Level</th><th>What to expect</th></tr></thead>
@@ -127,8 +124,8 @@ export default function MainPage() {
           </div>
         </section>
 
-        <div className="learning-paths grid gap-4 pt-20 max-[760px]:grid-cols-1 max-[760px]:pt-16">
-          <div className="section-kicker">Learning paths</div>
+        <div className="learning-paths grid gap-4 pt-15 max-[760px]:grid-cols-1 max-[760px]:pt-16">
+          <div className="section-kicker">Table of contents</div>
 
           {categories.map((category, index) => (
             <section className="level-section min-w-0 p-5 max-[760px]:p-4" id={`level-${category.slug}`} key={category.slug}>
