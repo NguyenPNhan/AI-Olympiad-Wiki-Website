@@ -75,12 +75,6 @@ export default function MainPage() {
         </a>
 
         <nav className="main-nav gap-7 max-[1080px]:gap-[18px]" aria-label="Primary navigation">
-          <a href="#top">Home</a>
-          {categories.slice(0, 3).map((category, index) => (
-            <a href={`#level-${category.slug}`} key={category.slug}>
-              {category.title}{index === 2 && <span className="nav-dot" />}
-            </a>
-          ))}
         </nav>
 
         <div className="header-tools gap-3 max-[760px]:col-start-2">
