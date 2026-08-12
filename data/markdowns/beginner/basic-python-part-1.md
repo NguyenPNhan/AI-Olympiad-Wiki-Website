@@ -76,14 +76,6 @@ is_trained = False
 
 ### Variable Naming Rules
 
-Variable names:
-
-- may contain letters, numbers, and underscores;
-- cannot begin with a number;
-- cannot contain spaces or hyphens;
-- are case-sensitive; and
-- cannot be Python keywords such as `if`, `for`, or `class`.
-
 Use descriptive `snake_case` names:
 
 ```python
@@ -99,6 +91,15 @@ x = 0.01
 
 # Clearer
 learning_rate = 0.01
+
+"""
+Variable names:
+- may contain letters, numbers, and underscores;
+- cannot begin with a number;
+- cannot contain spaces or hyphens;
+- are case-sensitive; and
+- cannot be Python keywords such as `if`, `for`, or `class`.
+"""
 ```
 
 ### Reassigning Variables
@@ -914,5 +915,3 @@ elif score >= 80:
 else:
     grade = "C"
 ```
-
-Next, continue with loops, functions, comprehensions, exceptions, and file handling in Part 2.

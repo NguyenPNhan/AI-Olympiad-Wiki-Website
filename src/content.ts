@@ -1,3 +1,5 @@
+import articleOrder from '../data/markdowns/order'
+
 export type Article = {
   title: string
   difficulty: number
@@ -113,9 +115,23 @@ function toArticle(sourcePath: string, raw: string): Article {
   }
 }
 
+const articleOrderByPath = new Map<string, number>(
+  articleOrder.map((path, index) => [path.replace(/\\/g, '/'), index] as const),
+)
+
+function articleOrderIndex(article: Article) {
+  const relativePath = article.sourcePath.replace(/^.*?data\/markdowns\//, '')
+  return articleOrderByPath.get(relativePath) ?? Number.POSITIVE_INFINITY
+}
+
 export const articles = Object.entries(rawMarkdownFiles)
   .map(([path, raw]) => toArticle(path, raw))
-  .sort((a, b) => a.title.localeCompare(b.title))
+  .sort((a, b) => {
+    const aIndex = articleOrderIndex(a)
+    const bIndex = articleOrderIndex(b)
+
+    return aIndex === bIndex ? a.title.localeCompare(b.title) : aIndex - bIndex
+  })
 
 const discoveredFolders = new Set(
   Object.keys(rawMarkdownFiles).map((path) => path.replace(/^.*?data\/markdowns\//, '').split('/')[0]),
