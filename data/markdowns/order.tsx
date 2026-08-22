@@ -5,6 +5,7 @@ const articleOrder = [
   'beginner/numpy.md',
   'beginner/basic-pandas-part-1.md',
   'beginner/basic-pandas-part-2.md',
+  'beginner/introduce-to-ai-olympiad.md'
 ] as const
 
 export default articleOrder

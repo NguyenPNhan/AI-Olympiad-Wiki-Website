@@ -39,6 +39,27 @@ const highlightLanguages = {
   yaml,
 }
 
+const markdownImages = import.meta.glob('/data/markdowns/**/*.{png,jpg,jpeg,gif,webp,svg}', {
+  eager: true,
+  import: 'default',
+  query: '?url',
+}) as Record<string, string>
+
+function resolveMarkdownImage(sourcePath: string, src?: string) {
+  if (!src || /^(?:[a-z]+:|\/|#)/i.test(src)) return src
+
+  const sourceDirectory = sourcePath.slice(0, sourcePath.lastIndexOf('/'))
+  const resolvedParts: string[] = []
+
+  for (const part of `${sourceDirectory}/${src}`.split('/')) {
+    if (!part || part === '.') continue
+    if (part === '..') resolvedParts.pop()
+    else resolvedParts.push(part)
+  }
+
+  return markdownImages[`/${resolvedParts.join('/')}`] ?? src
+}
+
 function nodeToText(node: ReactNode): string {
   if (typeof node === 'string' || typeof node === 'number') return String(node)
   if (Array.isArray(node)) return node.map(nodeToText).join('')
@@ -213,7 +234,13 @@ function ArticlePage() {
                   const external = href?.startsWith('http://') || href?.startsWith('https://')
                   return <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}>{children}</a>
                 },
-                img: ({ src, alt }) => <img src={src} alt={alt ?? ''} loading="lazy" />,
+                img: ({ src, alt }) => (
+                  <img
+                    src={resolveMarkdownImage(article.sourcePath, src)}
+                    alt={alt ?? ''}
+                    loading="lazy"
+                  />
+                ),
               }}
             >
               {article.body}
