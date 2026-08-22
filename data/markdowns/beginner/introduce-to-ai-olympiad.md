@@ -68,9 +68,7 @@ Example:
 |  120 |        3 |   5 |      410000 |
 |   60 |        1 |  20 |      180000 |
 
-Here, the target is `House Price`.
-
-Other regression tasks may involve predicting:
+Here, the target is `House Price`. Other regression tasks may involve predicting:
 
 ```text
 Temperature
@@ -126,9 +124,7 @@ Unlike image classification, object detection can identify **multiple objects in
 
 ## 5. Image Segmentation
 
-Image segmentation goes one step further than object detection. Instead of drawing a box around an object, the model predicts a class for individual **pixels**.
-
-For example, the model may label pixels as:
+Image segmentation goes one step further than object detection. Instead of drawing a box around an object, the model predicts a class for individual **pixels**. For example, the model may label pixels as:
 
 ```text
 Road
@@ -144,9 +140,7 @@ This allows the model to determine the exact shape and area occupied by each obj
 
 ## 6. Text Classification
 
-Text classification predicts a **category from text**.
-
-For example:
+Text classification predicts a **category from text**. For example:
 
 ```text
 "I love this product." → Positive
@@ -171,9 +165,7 @@ Intent detection
 
 ## 7. Text Generation
 
-Some problems require the model to **generate new text** rather than select a predefined class.
-
-Example:
+Some problems require the model to **generate new text** rather than select a predefined class. For example:
 
 ```text
 Input:
@@ -209,9 +201,7 @@ Example:
 | Wednesday |                128 |
 | Thursday  |                  ? |
 
-The goal is to use previous observations to predict future values.
-
-Common examples include forecasting:
+The goal is to use previous observations to predict future values. Common examples include forecasting:
 
 ```text
 Weather
@@ -227,9 +217,7 @@ Because the order of observations matters, time-series data must be handled diff
 
 ## 9. Clustering
 
-Clustering is an **unsupervised learning** problem. Unlike classification, there may be no target column.
-
-The goal is to automatically group similar examples together.
+Clustering is an **unsupervised learning** problem. Unlike classification, there may be no target column. The goal is to automatically group similar examples together.
 
 For example, a clustering algorithm might discover groups of customers with similar behavior:
 
@@ -255,7 +243,6 @@ A useful rule of thumb is:
 
 ```text
 Target to predict → Supervised Learning
-
 No target → Unsupervised Learning
 ```
 
@@ -284,18 +271,4 @@ Anomaly discovery
 
 ## Summary
 
-When you encounter a new AI Olympiad problem, first identify the **input data** and the **expected output**.
-
-```text
-Tabular data + category       → Classification
-Tabular data + number         → Regression
-Image + category              → Image Classification
-Image + object locations      → Object Detection
-Image + pixel labels          → Image Segmentation
-Text + category               → Text Classification
-Text + generated text         → Text Generation
-Past observations + future    → Time-Series Forecasting
-Data without labels           → Clustering
-```
-
-Correctly identifying the problem type is the first step toward choosing an appropriate model, evaluation metric, and solution strategy.
+When you encounter a new AI Olympiad problem, first identify the **input data** and the **expected output**. Correctly identifying the problem type is the first step toward choosing an appropriate model, evaluation metric, and solution strategy.

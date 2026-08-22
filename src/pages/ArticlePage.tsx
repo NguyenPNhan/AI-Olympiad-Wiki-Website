@@ -85,6 +85,38 @@ function cleanHeading(value: string) {
     .trim()
 }
 
+function normalizeDisplayMath(markdown: string) {
+  let codeFence: { marker: '`' | '~'; length: number } | undefined
+
+  return markdown
+    .split('\n')
+    .flatMap((line) => {
+      const fence = line.match(/^\s*(`{3,}|~{3,})/)
+
+      if (fence) {
+        const marker = fence[1][0] as '`' | '~'
+
+        if (!codeFence) {
+          codeFence = { marker, length: fence[1].length }
+        } else if (marker === codeFence.marker && fence[1].length >= codeFence.length) {
+          codeFence = undefined
+        }
+
+        return line
+      }
+
+      if (codeFence) return line
+
+      if (/^\s*\\\[\s*$/.test(line) || /^\s*\\\]\s*$/.test(line)) return '$$'
+
+      const singleLineDisplay = line.match(/^\s*\\\[\s*(.*?)\s*\\\]\s*$/)
+      if (singleLineDisplay) return ['$$', singleLineDisplay[1], '$$']
+
+      return line
+    })
+    .join('\n')
+}
+
 function articleHeadings(markdown: string) {
   let inCodeBlock = false
 
@@ -124,6 +156,10 @@ function CodeBlock({ children }: { children?: ReactNode }) {
     : undefined
   const language = codeProps?.className?.match(/(?:^|\s)language-([\w-]+)/)?.[1] || 'text'
   const code = nodeToText(codeProps?.children ?? children).replace(/\n$/, '')
+
+  if (codeProps?.className?.split(/\s+/).includes('math-display')) {
+    return <div className="equation-block">{codeProps.children}</div>
+  }
 
   async function copyCode() {
     await navigator.clipboard.writeText(code)
@@ -221,13 +257,22 @@ function ArticlePage() {
 
           <div className="markdown-body">
             <ReactMarkdown
-              remarkPlugins={[remarkGfm, remarkMath]}
-              rehypePlugins={[rehypeKatex, [rehypeHighlight, { detect: false, languages: highlightLanguages }]]}
+              remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: true }]]}
+              rehypePlugins={[[rehypeKatex, { output: 'htmlAndMathml', throwOnError: false }], [rehypeHighlight, { detect: false, languages: highlightLanguages }]]}
               components={{
                 h1: ({ children }) => <Heading level={1}>{children}</Heading>,
                 h2: ({ children }) => <Heading level={2}>{children}</Heading>,
                 h3: ({ children }) => <Heading level={3}>{children}</Heading>,
                 h4: ({ children }) => <Heading level={4}>{children}</Heading>,
+                span: ({ node, className, children, ...props }) => {
+                  void node
+
+                  if (className?.split(/\s+/).includes('katex-display')) {
+                    return <div className="equation-block"><span className={className} {...props}>{children}</span></div>
+                  }
+
+                  return <span className={className} {...props}>{children}</span>
+                },
                 pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
                 table: ({ children }) => <div className="table-wrap markdown-table-wrap"><table>{children}</table></div>,
                 a: ({ href, children }) => {
@@ -243,7 +288,7 @@ function ArticlePage() {
                 ),
               }}
             >
-              {article.body}
+              {normalizeDisplayMath(article.body)}
             </ReactMarkdown>
           </div>
         </article>

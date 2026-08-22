@@ -378,96 +378,63 @@ y_pred = model.predict(X_test)
 
 ## 25. Mean Squared Error
 
-Regression models use different evaluation metrics from classification models. One of the most common is **Mean Squared Error (MSE)**.
-
-Import:
+**Mean Squared Error (MSE)** measures the average squared difference between the actual and predicted values.
 
 ```python
 from sklearn.metrics import mean_squared_error
-```
-
-Calculate:
-
-```python
 mse = mean_squared_error(y_test, y_pred)
 print(mse)
 ```
 
-MSE measures the average squared difference between the **actual values** and the **predicted values**. Mathematically, $\text{MSE} = \frac{1}{n}\sum_{i=1}^{n}(y_i-\hat{y}_i)^2$, where:
+Mathematically,
 
-- $n$ is the number of observations
-- $y_i$ is the actual value
-- $(\hat{y}_i)$ is the predicted value
+$$
+\text{MSE} = \frac{1}{n}\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^2
+$$
 
-In general, smaller `MSE` value means better predictions.
+where:
 
-> Note: MSE is expressed in the **square of the target's unit**. For example, if the target is measured in dollars, MSE is measured in dollars².
+* $y_{i}$ is the actual value
+* $\hat{y}_{i}$ is the predicted value
+* $n$ is the number of observations
+
+In general, lower `MSE` means better predictions, while `MSE = 0` indicates perfect predictions.
+
+> MSE uses the **squared unit** of the target. For example, if the target is measured in dollars, MSE is measured in dollars².
 
 ---
 
 ## 26. R² Score
 
-Another common regression metric is the **R² score**, also called the **coefficient of determination**.
-
-Import:
+The **R² score**, or **coefficient of determination**, measures how well the model explains variation in the target.
 
 ```python
 from sklearn.metrics import r2_score
-```
-
-Calculate:
-
-```python
 r2 = r2_score(y_test, y_pred)
 print(r2)
 ```
 
-R² measures how well the model explains the variation in the target variable.
-
 Mathematically,
 
-$R^2
-===
-
-1-
-\frac{
-\sum_{i=1}^{n}(y_i-\hat{y}*i)^2
-}{
-\sum*{i=1}^{n}(y_i-\bar{y})^2
-}$
+$$
+R^2 =
+1 -
+\frac{\sum_{i=1}^{n}(y_{i}-\hat{y}_{i})^2}
+{\sum_{i=1}^{n}(y_{i}-\bar{y})^2}
+$$
 
 where:
 
-* (y_i) is the actual value
-* (\hat{y}_i) is the predicted value
-* (\bar{y}) is the mean of the actual values
+* $y_{i}$ is the actual value
+* $\hat{y}_{i}$ is the predicted value
+* $\bar{y}$ is the mean of the actual values
 
-The numerator,
-
-[
-\sum (y_i-\hat{y}_i)^2
-]
-
-represents the model's prediction error.
-
-The denominator,
-
-[
-\sum (y_i-\bar{y})^2
-]
-
-represents the total variation in the target.
-
-Therefore, R² compares your model with a simple baseline that always predicts the mean of the target.
-
-Common interpretations are:
+Common interpretations:
 
 ```text
-R² = 1      -> perfect predictions
-
-R² = 0      -> model performs about as well as predicting the mean
-
-R² < 0      -> model performs worse than predicting the mean
+R² = 1    -> perfect predictions
+R² = 0    -> as good as predicting the mean
+R² < 0    -> worse than predicting the mean
 ```
 
 For example:
@@ -476,182 +443,37 @@ For example:
 R² = 0.85
 ```
 
-means that the model explains approximately **85% of the variation** in the target variable.
-
-For `LinearRegression`, you can also calculate R² using:
+means the model explains about **85% of the variation** in the target. For `LinearRegression`, you can also calculate R² using:
 
 ```python
 model.score(X_test, y_test)
 ```
-
-Therefore, remember:
-
-```text
-Classifier .score()        -> usually accuracy
-LinearRegression .score()  -> R²
-```
-
 MSE and R² describe regression performance from different perspectives:
 
 ```text
-MSE  -> How large are the prediction errors?
-R²   -> How well does the model explain variation in the target?
+MSE -> How large are the prediction errors? Lower MSE is better.
+R²  -> How well does the model explain variation in the target? Higher R² is better.
 ```
-
-For both metrics:
-
-```text
-Lower MSE is better.
-Higher R² is better.
-```
-
-## 27. Model Parameters
-
-After a linear model has been trained, we can inspect what it learned.
-
-For linear regression:
-
-```python
-model.coef_
-```
-
-returns the coefficient.
-
-And:
-
-```python
-model.intercept_
-```
-
-returns the intercept.
-
-Conceptually, linear regression learns an equation like:
-
-```text
-prediction = intercept + coefficient × feature
-```
-
-With multiple features:
-
-```text
-prediction =
-intercept
-+ coefficient1 × feature1
-+ coefficient2 × feature2
-+ ...
-```
-
----
 
 ## 28. The Scikit-learn Estimator Pattern
 
-Many Scikit-learn models follow the same basic API.
-
-Create:
-
-```python
-model = SomeModel()
-```
-
-Train:
-
-```python
-model.fit(
-    X_train,
-    y_train
-)
-```
-
-Predict:
-
-```python
-y_pred = model.predict(
-    X_test
-)
-```
-
-Evaluate:
-
-```python
-metric(
-    y_test,
-    y_pred
-)
-```
-
-This pattern is extremely important.
-
-Even when you change the algorithm, the overall workflow often remains very similar.
-
-For example:
+Consider this example:
 
 ```python
 from sklearn.linear_model import LogisticRegression
-
 model = LogisticRegression()
-
 model.fit(X_train, y_train)
-
 y_pred = model.predict(X_test)
 ```
 
-A different model can follow a similar structure:
+This pattern is extremely important. Even when you change the algorithm, the overall workflow often remains very similar. A different model can follow a similar structure:
 
 ```python
 from sklearn.tree import DecisionTreeClassifier
-
 model = DecisionTreeClassifier()
-
 model.fit(X_train, y_train)
-
 y_pred = model.predict(X_test)
 ```
-
----
-
-## 29. Common Scikit-learn Naming Convention
-
-You will see these names very frequently:
-
-```text
-X
-y
-
-X_train
-X_test
-
-y_train
-y_test
-
-y_pred
-```
-
-Their meanings are:
-
-```text
-X
-Features
-
-y
-Target
-
-X_train
-Training features
-
-X_test
-Testing features
-
-y_train
-Training targets
-
-y_test
-Actual testing targets
-
-y_pred
-Predicted testing targets
-```
-
-Understanding these names makes machine learning code much easier to read.
 
 ---
 
@@ -664,12 +486,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
-X = df[
-    ["hours_studied", "attendance"]
-]
-
+X = df[["hours_studied", "attendance"]]
 y = df["passed"]
-
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
@@ -678,7 +496,6 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 model = LogisticRegression()
-
 model.fit(
     X_train,
     y_train
@@ -692,20 +509,7 @@ accuracy = accuracy_score(
     y_test,
     y_pred
 )
-
 print(accuracy)
-```
-
-The important sequence is:
-
-```text
-1. Select X
-2. Select y
-3. Split data
-4. Create model
-5. Fit model
-6. Predict
-7. Evaluate
 ```
 
 ---
@@ -719,12 +523,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-X = df[
-    ["hours_studied"]
-]
-
+X = df[["hours_studied"]]
 y = df["score"]
-
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
@@ -733,7 +533,6 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 model = LinearRegression()
-
 model.fit(
     X_train,
     y_train
@@ -747,14 +546,7 @@ mse = mean_squared_error(
     y_test,
     y_pred
 )
-
 print(mse)
-```
-
-Again:
-
-```text
-X → split → fit → predict → evaluate
 ```
 
 ---
@@ -856,20 +648,10 @@ df = pd.DataFrame({
 })
 
 
-# Select features.
-
 X = df[
     ["hours_studied", "attendance"]
 ]
-
-
-# Select target.
-
 y = df["passed"]
-
-
-# Split the dataset.
-
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
@@ -877,55 +659,22 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42
 )
 
-
-# Create the model.
-
 model = LogisticRegression()
-
-
-# Train the model.
-
 model.fit(
     X_train,
     y_train
 )
 
-
-# Make predictions.
-
 y_pred = model.predict(
     X_test
 )
-
-
-# Evaluate the model.
 
 accuracy = accuracy_score(
     y_test,
     y_pred
 )
-
-
 print("Predictions:", y_pred)
 print("Accuracy:", accuracy)
-```
-
-This basic pattern is the foundation of many machine learning projects:
-
-```text
-Prepare data
-     ↓
-Select X and y
-     ↓
-Split train/test
-     ↓
-Create model
-     ↓
-fit()
-     ↓
-predict()
-     ↓
-Evaluate
 ```
 
 Once this workflow is familiar, you can replace the model with many other Scikit-learn algorithms while keeping much of the surrounding code the same.
