@@ -248,7 +248,7 @@ function ArticlePage() {
       </header>
 
       <main id="top" className="article-layout grid min-h-[calc(100vh-68px)] max-[760px]:block max-[760px]:min-h-0">
-        <article className="article-column px-12 pt-10 pb-24 max-[760px]:px-4 max-[760px]:pt-7 max-[760px]:pb-16">
+        <article className="article-column px-10 pt-10 pb-24 max-[760px]:px-4 max-[760px]:pt-7 max-[760px]:pb-16">
           <div className="article-heading mb-9 gap-5">
             <div>
               <h1 className="m-0">{article.title}</h1>
